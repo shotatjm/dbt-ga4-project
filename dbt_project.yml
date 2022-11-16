@@ -1,0 +1,32 @@
+name: 'your-project'
+version: '1.0.0'
+config-version: 2
+
+profile: 'your-profile'
+
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+docs-paths: ["docs"]
+asset-paths: ["assets"]
+
+target-path: "target"
+log-path: "logs"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  your-project:
+    secure:
+      +materialized: view
+    warehouse:
+      +materialized: view
+    mart:
+      +materialized: table
+
+vars:
+  ga_start_date: "20221101" # CHANGE THIS!

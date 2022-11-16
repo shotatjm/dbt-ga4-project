@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: ga
+    database: streets-app-{{ target.name }}
+    schema: |
+      {%- if  target.name == "dev" -%} analytics_316450761
+      {%- elif target.name == "stg" -%} analytics_320612741
+      {%- elif target.name == "prd" -%} analytics_321785887
+      {%- else -%} invalid_schema
+      {%- endif -%}
+    tables:
+      - name: events
+        identifier: events_*
+        description: GA4のエクスポートされたイベント。日付でシャーディングされている。エクスポートタイミングは遅れることがある。
+      - name: events_intraday
+        identifier: events_intraday_*
+        description: GA4のストリーミングエクスポートされたイベント。eventsにまだエクスポートされていないデータが入っている。
+      - name: events_intraday_today
+        identifier: events_intraday_{{ run_started_at.astimezone(modules.pytz.timezone("Asia/Tokyo")).strftime("%Y%m%d") }}
+        description: GA4のストリーミングエクスポートされた当日のイベント。eventsにまだエクスポートされていないデータが入っている。

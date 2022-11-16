@@ -1,0 +1,270 @@
+version: 2
+
+models:
+  - name: whs_ga__base_events
+    description: GAのイベントを `event_date` でパーティショニングしたテーブル
+  - name: whs_ga__base_events_intraday
+    description: GAのストリーミングされたイベントのテーブル
+  - name: whs_ga__events
+    description: 分析用に `base_events` と `base_events_intraday` を結合したテーブル
+
+# 基本イベント
+  - name: whs_ga__screen_view
+    description: アプリ内のページを開いたときに記録されるイベント
+    columns:
+      - name: screen
+        tests:
+          - not_null
+  - name: whs_ga__app_open
+    description: アプリを開いた（フォアグラウンドにした）ときに記録されるイベント
+  - name: whs_ga__session_start
+    description: セッションを開始したときに記録されるイベント。セッションは30分間操作がない時終了する。
+    columns:
+      - name: session_key
+        tests:
+          - not_null
+      - name: ga_session_number
+        tests:
+          - not_null
+  - name: whs_ga__first_open
+    description: アプリを初めて開いたときに記録されるイベント
+
+# アカウント
+  - name: whs_ga__sign_up
+    description: アカウントを作成したときに記録されるイベント
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+      - name: method
+        tests:
+          - not_null
+  - name: whs_ga__login
+    description: アカウントにログインしたときに記録されるイベント
+    columns:
+      - name: method
+        tests:
+          - not_null
+  - name: whs_ga__logout
+    description: アカウントをログアウトしたときに記録されるイベント
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+  - name: whs_ga__require_login
+    description: ログインを要求された時に記録されるイベント
+    columns:
+      - name: reason
+        tests:
+          - not_null
+  - name: whs_ga__edit_account
+    description: アカウントを編集したときに記録されるイベント
+  - name: whs_ga__delete_user
+    description: アカウントを削除したときに記録されるイベント
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+  - name: whs_ga__register_streets_mate
+    description: Streets Mateに登録したときに記録されるイベント
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+  - name: whs_ga__cancel_streets_mate
+    description: Streets Mateを退会したときに記録されるイベント
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+  - name: whs_ga__edit_user_name
+    description: ユーザー名を編集したときに記録されるイベント
+  - name: whs_ga__edit_email
+    description: メールアドレスを編集したときに記録されるイベント
+
+# スポット詳細画面
+  - name: whs_ga__open_calendar
+    description: カレンダーアイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__open_maps
+    description: マップアイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__phone_call
+    description: 電話アイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__open_website
+    description: Webアイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__open_ec
+    description: ECアイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__open_payment_instrument
+    description: 決済手段アイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__open_reservation_method
+    description: 予約方法アイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__open_parking
+    description: 駐車場アイコンをタップしたときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+
+# ブックマーク
+  - name: whs_ga__add_bookmark
+    description: 投稿を保存したときに記録されるイベント
+    columns:
+      - name: post_id
+        tests:
+          - not_null
+  - name: whs_ga__remove_bookmark
+    description: 投稿の保存を削除したときに記録されるイベント
+    columns:
+      - name: post_id
+        tests:
+          - not_null
+
+# ファン
+  - name: whs_ga__set_fan
+    description: スポットのファンになったときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__unset_fan
+    description: スポットのファンを解除したときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+
+# 訪問状況
+  - name: whs_ga__set_interesting
+    description: スポットを行きたいリストに登録ときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__unset_interesting
+    description: スポットを行きたいリストから削除したときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__set_visited
+    description: スポットを行ったリストに登録ときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__unset_visited
+    description: スポットを行ったリストから削除したときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+
+# スポット管理
+  - name: whs_ga__create_spot
+    description: スポットを作成したときに記録されるイベント
+  - name: whs_ga__edit_spot
+    description: スポットを編集したときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__report_spot
+    description: スポットを報告したときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+
+# カレンダー表示・管理
+  - name: whs_ga__click_calendar_date
+    description: カレンダーの日付を選択したときに記録されるイベント
+  - name: whs_ga__change_calendar_month
+    description: カレンダーの表示月を変更したときに記録されるイベント
+  - name: whs_ga__set_schedule
+    description: 定期スケジュールを設定したときに記録されるイベント
+  - name: whs_ga__set_temporary_schedule
+    description: 臨時スケジュールを作成したときに記録されるイベント
+  - name: whs_ga__unset_temporary_schedule
+    description: 臨時スケジュールを削除したときに記録されるイベント
+
+# 投稿表示・管理
+  - name: whs_ga__post_impression
+    description: 投稿を50%以上表示したときに記録されるイベント
+    columns:
+      - name: post_id
+        tests:
+          - not_null
+      - name: spot_id
+        tests:
+          - not_null
+  - name: whs_ga__send_post
+    description: 投稿を送信したときに記録されるイベント
+  - name: whs_ga__delete_image
+    description: 投稿作成中に画像を削除したときに記録されるイベント
+  - name: whs_ga__cancel_make_post
+    description: 投稿作成中にキャンセルしたときに記録されるイベント
+  - name: whs_ga__report_post
+    description: 投稿を報告したときに記録されるイベント
+    columns:
+      - name: spot_id
+        tests:
+          - not_null
+
+# 設定画面
+  - name: whs_ga__open_help_center
+    description: ヘルプセンターを開いたときに記録されるイベント
+  - name: whs_ga__open_request
+    description: サービス改善のご要望を開いたときに記録されるイベント
+  - name: whs_ga__request_my_town
+    description: 地域のリクエストを開いたときに記録されるイベント
+  - name: whs_ga__open_privacy_policy
+    description: プライバシーポリシーを開いたときに記録されるイベント
+  - name: whs_ga__open_terms
+    description: 利用規約を開いたときに記録されるイベント
+  - name: whs_ga__open_credit
+    description: ライセンスを開いたときに記録されるイベント
+
+# スポット設定画面
+  - name: whs_ga__open_location_config
+    description: 位置情報の許可設定画面を開いたときに記録されるイベント
+  - name: whs_ga__open_card_request
+    description: スポットカードの郵送希望を開いたときに記録されるイベント
+
+# その他
+  - name: whs_ga__refresh_screen
+    description: スクリーンをリフレッシュした時に記録されるイベント
+    columns:
+      - name: screen
+        tests:
+          - not_null
+  - name: whs_ga__app_update
+    description: アプリをアップデート後、再起動したときに記録されるイベント
+  - name: whs_ga__os_update
+    description: アプリをアップデート後、再起動したときに記録されるイベント
