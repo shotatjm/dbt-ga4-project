@@ -2,13 +2,8 @@ version: 2
 
 sources:
   - name: ga
-    database: streets-app-{{ target.name }}
-    schema: |
-      {%- if  target.name == "dev" -%} analytics_316450761
-      {%- elif target.name == "stg" -%} analytics_320612741
-      {%- elif target.name == "prd" -%} analytics_321785887
-      {%- else -%} invalid_schema
-      {%- endif -%}
+    database: your_gcp_project
+    schema: your_dataset # analytics_*******
     tables:
       - name: events
         identifier: events_*
