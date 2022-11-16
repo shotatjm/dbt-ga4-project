@@ -6,7 +6,7 @@ WITH
       COUNT(DISTINCT article_id) AS articles,
       COUNT(DISTINCT IF(read_to_end, article_id, NULL)) AS read_to_ends,
     FROM
-      {{ ref('whs_ga__page_view') }}
+      {{ ref('whs_ga__page_views') }}
     GROUP BY
       1
   ),
@@ -36,7 +36,7 @@ WITH
       FIRST_VALUE(page_url) OVER (PARTITION BY session_key ORDER BY event_timestamp DESC) AS exit_page_url,
       FIRST_VALUE(page_url_canonical) OVER (PARTITION BY session_key ORDER BY event_timestamp DESC) AS exit_page_url_canonical
     FROM
-      {{ ref('whs_ga__page_view') }}
+      {{ ref('whs_ga__page_views') }}
   )
 SELECT
   *,

@@ -10,8 +10,8 @@ WITH
   unnested AS (
     SELECT
       *,
-      {{ ga_unnest_key('event_params', 'track_category') }},
-      {{ ga_unnest_key('event_params', 'share_type') }},
+      {{ ga_unnest_key('event_params', 'track_category') }}, # custom event parameter
+      {{ ga_unnest_key('event_params', 'share_type') }}, # custom event parameter
       {{ ga_unnest_key('event_params', 'link_url') }},
       {{ ga_unnest_key('event_params', 'outbound') }},
     FROM

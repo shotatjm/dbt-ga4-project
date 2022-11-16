@@ -36,11 +36,11 @@ WITH
   add_useful_columns AS (
     SELECT
       *,
-      {{ normalize_url(page_url) }} AS page_url_canonical,
+      {{ normalize_url('page_url') }} AS page_url_canonical,
       TO_BASE64(MD5(CONCAT(stream_id, user_pseudo_id, CAST(ga_session_id AS STRING)))) AS session_key,
-      {{ convert_region(geo.region) }} AS prefecture,
+      {{ convert_region('geo.region') }} AS prefecture,
       TIMESTAMP_MICROS(event_timestamp) AS created_at,
-      {{ calc_page_number(page_url, page_type, device.category) }} AS page_number, # custom event parameter
+      {{ calc_page_number('page_url', 'page_type', 'device.category') }} AS page_number, # custom event parameter
     FROM
       casted
   )

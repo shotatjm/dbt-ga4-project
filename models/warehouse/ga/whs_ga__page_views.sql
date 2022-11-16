@@ -31,7 +31,7 @@ WITH
         SELECT
           page_view_id
         FROM
-          {{ ref('whs_ga__read_to_end') }} AS read_to_end
+          {{ ref('whs_ga__read_to_ends') }} AS read_to_end
         WHERE
           read_to_end.page_view_id = event_extracted.page_view_id
       ) AS read_to_end,
