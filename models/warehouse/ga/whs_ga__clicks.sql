@@ -11,16 +11,18 @@ WITH
     SELECT
       *,
       {{ ga_unnest_key('event_params', 'track_category') }}, # custom event parameter
-      {{ ga_unnest_key('event_params', 'share_type') }}, # custom event parameter
       {{ ga_unnest_key('event_params', 'link_url') }},
       {{ ga_unnest_key('event_params', 'outbound') }},
     FROM
       event_extracted
   ),
   casted AS (
-    * EXCEPT ( outbound ),
-    {{ normalize_url('link_url') }} AS link_url_canonical,
-    COALESCE(CAST(outbound AS BOOLEAN), FALSE) AS outbound,
+    SELECT
+      * EXCEPT ( outbound ),
+      {{ normalize_url('link_url') }} AS link_url_canonical,
+      COALESCE(CAST(outbound AS BOOLEAN), FALSE) AS outbound,
+    FROM
+      unnested
   )
 SELECT
   *
