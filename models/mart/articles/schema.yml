@@ -1,0 +1,24 @@
+version: 2
+
+models:
+# 日次集計テーブル
+  - name: mart_articles__daily_metrics_for_each_device
+    description: 日付と記事IDとデバイスをディメンションに集計したテーブル。 `event_date` でパーティショニング。
+  - name: mart_articles__daily_metrics_for_each_referrer
+    description: 日付と記事IDと流入元をディメンションに集計したテーブル。 `event_date` でパーティショニング。
+
+# ダッシュボード接続用テーブル
+  - name: mart_articles__metrics_for_each_device
+    description: 記事IDとデバイスをディメンションに集計したテーブル。
+    columns:
+      - name: article_id
+        tests:
+          - not_null
+          - unique
+  - name: mart_articles__metrics_for_each_referrer
+    description: 記事IDと流入元をディメンションに集計したテーブル。
+    columns:
+      - name: article_id
+        tests:
+          - not_null
+          - unique
