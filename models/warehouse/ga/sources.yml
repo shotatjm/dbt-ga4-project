@@ -11,6 +11,7 @@ sources:
       - name: events_intraday
         identifier: events_intraday_*
         description: GA4のストリーミングエクスポートされたイベント。eventsにまだエクスポートされていないデータが入っている。
+      ## 以下はevents_intradayテーブルが存在するかどうか確かめるために使う。特にdev環境などでevents_intradayテーブルが存在しないことがあり得る
       - name: events_intraday_today
         identifier: events_intraday_{{ run_started_at.astimezone(modules.pytz.timezone("Asia/Tokyo")).strftime("%Y%m%d") }}
         description: GA4のストリーミングエクスポートされた当日のイベント。eventsにまだエクスポートされていないデータが入っている。
