@@ -20,7 +20,7 @@ WITH
       UNNEST(GENERATE_DATE_ARRAY(DATE_SUB(_dbt_max_partition, INTERVAL 27 day), CURRENT_DATE('Asia/Tokyo'))) AS event_occured_date,
       UNNEST(GENERATE_DATE_ARRAY(_dbt_max_partition, CURRENT_DATE('Asia/Tokyo'))) AS target_date
     {% else %}
-      UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE('%Y%m%d', {{ var('ga_start_date') }}), CURRENT_DATE('Asia/Tokyo'))) AS event_occured_date,
+      UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE('%Y%m%d', CAST({{ var('ga_start_date') }} AS STRING)), CURRENT_DATE('Asia/Tokyo'))) AS event_occured_date,
       UNNEST(GENERATE_DATE_ARRAY(event_occured_date, DATE_ADD(event_occured_date, INTERVAL 27 day))) AS target_date
     {% endif %}
   ),
