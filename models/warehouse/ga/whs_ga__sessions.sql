@@ -1,12 +1,29 @@
+{{
+  config(
+    materialized = 'incremental',
+    incremental_strategy = 'insert_overwrite',
+    partition_by={
+      "field": "event_date",
+      "data_type": "date",
+    },
+    tags=["hourly"],
+  )
+}}
+
 WITH
   session_agg AS (
     SELECT
       session_key,
+      MIN(event_date) AS event_date,
       COUNT(1) AS page_views,
       COUNT(DISTINCT article_id) AS articles,
       COUNT(DISTINCT IF(read_to_end, article_id, NULL)) AS read_to_ends,
     FROM
       {{ ref('whs_ga__page_views') }}
+    {% if is_incremental() %}
+    WHERE
+      event_date >= _dbt_max_partition
+    {% endif %}
     GROUP BY
       1
   ),
@@ -36,10 +53,14 @@ WITH
       FIRST_VALUE(page_url_canonical) OVER (PARTITION BY session_key ORDER BY created_at DESC) AS exit_page_url_canonical
     FROM
       {{ ref('whs_ga__page_views') }}
+    {% if is_incremental() %}
+    WHERE
+      event_date >= _dbt_max_partition
+    {% endif %}
   )
 SELECT
   *,
   TIMESTAMP_DIFF(exit_timestamp, entrance_timestamp, SECOND) AS session_duration,
 FROM
   session_agg
-  JOIN session_window USING (session_key)
+  JOIN session_window USING (session_key, event_date)

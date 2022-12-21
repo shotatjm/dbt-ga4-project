@@ -33,7 +33,8 @@ WITH
         FROM
           {{ ref('whs_ga__read_to_ends') }} AS read_to_end
         WHERE
-          read_to_end.page_view_id = event_extracted.page_view_id
+          read_to_end.event_date = event_extracted.event_date
+          AND read_to_end.page_view_id = event_extracted.page_view_id
       ) AS read_to_end,
     FROM
       event_extracted

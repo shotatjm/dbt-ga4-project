@@ -1,11 +1,28 @@
+{{
+  config(
+    materialized = 'incremental',
+    incremental_strategy = 'insert_overwrite',
+    partition_by={
+      "field": "event_date",
+      "data_type": "date",
+    },
+    tags=["hourly"],
+  )
+}}
+
 WITH
   target_term AS (
     SELECT
       event_occured_date,
       target_date
     FROM
+    {% if is_incremental() %}
+      UNNEST(GENERATE_DATE_ARRAY(DATE_SUB(_dbt_max_partition, INTERVAL 27 day), CURRENT_DATE('Asia/Tokyo'))) AS event_occured_date,
+      UNNEST(GENERATE_DATE_ARRAY(_dbt_max_partition, CURRENT_DATE('Asia/Tokyo'))) AS target_date
+    {% else %}
       UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE('%Y%m%d', {{ var('ga_start_date') }}), CURRENT_DATE('Asia/Tokyo'))) AS event_occured_date,
       UNNEST(GENERATE_DATE_ARRAY(event_occured_date, DATE_ADD(event_occured_date, INTERVAL 27 day))) AS target_date
+    {% endif %}
   ),
   user_performance AS (
     SELECT
@@ -18,6 +35,10 @@ WITH
       SUM(read_to_ends) AS read_to_ends,
     FROM
       {{ ref('whs_ga__sessions') }}
+    {% if is_incremental() %}
+    WHERE
+      event_date >= DATE_SUB(_dbt_max_partition, INTERVAL 27 day)
+    {% endif %}
     GROUP BY
       1,
       2
