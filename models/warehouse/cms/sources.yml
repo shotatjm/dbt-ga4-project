@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: cms
+    database: your_gcp_project
+    schema: your_dataset
+    tables:
+      - name: article_log
+        identifier: article_log
+        description: CMSからエクスポートされた記事の変更ログ。
