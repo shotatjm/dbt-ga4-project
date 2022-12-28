@@ -22,4 +22,4 @@ FROM
   LEFT JOIN {{ ref('whs_cms__articles') }} AS articles ON daily_metrics_for_each_related.related_article_id = articles.article_id
 GROUP BY
   1,
-  2;
+  2

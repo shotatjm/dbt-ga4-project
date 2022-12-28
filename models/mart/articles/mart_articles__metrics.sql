@@ -36,4 +36,4 @@ SELECT
   *
 FROM
   {{ ref('whs_cms__articles') }} AS articles
-  JOIN article_metrics USING (article_id);
+  JOIN article_metrics USING (article_id)

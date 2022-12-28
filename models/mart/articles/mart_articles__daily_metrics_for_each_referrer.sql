@@ -40,6 +40,10 @@ WITH
       COUNTIF(read_to_end) AS read_to_ends,
     FROM
       joined
+    GROUP BY
+      1,
+      2,
+      3
   )
 SELECT
   *,

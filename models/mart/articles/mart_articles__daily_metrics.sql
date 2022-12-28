@@ -43,7 +43,7 @@ WITH
       ANY_VALUE(article_type) AS article_type,
       LOGICAL_OR(page_type = 'ad') AS is_ad,
       COUNT(1) AS page_views,
-      COUNT(DISTINCT session_id) AS sessions,
+      COUNT(DISTINCT session_key) AS sessions,
       COUNT(DISTINCT user_pseudo_id) AS unique_users,
       COUNTIF(read_to_end) AS read_to_ends
     FROM

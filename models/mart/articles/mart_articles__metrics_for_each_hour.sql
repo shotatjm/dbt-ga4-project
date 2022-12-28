@@ -17,4 +17,4 @@ FROM
   {{ ref('mart_articles__daily_metrics_for_each_hour') }}
 GROUP BY
   1,
-  2;
+  2
