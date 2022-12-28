@@ -32,7 +32,7 @@ WITH
     SELECT
       event_date,
       article_id,
-      {{ classify_referrer('source, medium') }} AS referrer,
+      {{ classify_referrer('source', 'medium') }} AS referrer,
       ANY_VALUE(published_at) AS published_at,
       COUNT(1) AS page_views,
       COUNT(DISTINCT session_key) AS sessions,
