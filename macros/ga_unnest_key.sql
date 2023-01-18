@@ -2,7 +2,7 @@
 
 {% if  if_null == "default" -%}
     (SELECT value.{{value_type}} FROM unnest({{column_to_unnest}}) WHERE key = '{{key_to_extract}}')
-{% else if  if_null == "check_int_value" -%}
+{% elif  if_null == "check_int_value" -%}
     IFNULL(
         (SELECT value.{{value_type}} FROM unnest({{column_to_unnest}}) WHERE key = '{{key_to_extract}}'),
         CAST((SELECT value.int_value FROM unnest({{column_to_unnest}}) WHERE key = '{{key_to_extract}}') AS STRING)
