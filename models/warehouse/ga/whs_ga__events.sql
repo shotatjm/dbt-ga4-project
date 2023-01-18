@@ -19,7 +19,7 @@ WITH
       {{ ga_unnest_key('event_params', 'term') }},
       {{ ga_unnest_key('event_params', 'page_view_id') }}, # custom event parameter
       {{ ga_unnest_key('event_params', 'page_type') }}, # custom event parameter
-      {{ ga_unnest_key('event_params', 'article_id') }}, # custom event parameter
+      {{ ga_unnest_key('event_params', 'article_id', if_null = 'check_int_value') }}, # custom event parameter
       {{ ga_unnest_key('event_params', 'article_type') }}, # custom event parameter
       {{ ga_unnest_key('event_params', 'published_at') }}, # custom event parameter
     FROM
