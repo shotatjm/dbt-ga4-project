@@ -61,7 +61,6 @@ WITH
   )
 SELECT
   *,
-  SAFE_DIVIDE(sessions,unique_users) AS frequency,
   SAFE_DIVIDE(page_views, sessions) AS pages_per_session,
   SAFE_DIVIDE(read_to_ends, articles) AS read_to_end_rate,
 FROM
