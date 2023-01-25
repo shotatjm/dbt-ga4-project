@@ -4,7 +4,7 @@ SET start_date = "20191201";
 SET end_date = "20191201";
 SET host = "bunshun.jp";
 
-CREATE TABLE IF NOT EXISTS tmp_us.base_events
+CREATE OR REPLACE TABLE tmp_us.base_events
 (
     event_date DATE,
     event_timestamp INT64,
