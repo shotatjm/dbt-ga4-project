@@ -16,7 +16,7 @@ SELECT
   COUNTIF(frequency_segment = 'medium') AS medium_users,
   COUNTIF(frequency_segment = 'heavy') AS heavy_users,
   COUNTIF(frequency_segment = 'royal') AS royal_users,
-  SUM(sessoins) AS sessoins,
+  SUM(sessions) AS sessions,
   SUM(page_views) AS page_views,
   SUM(articles) AS articles,
   SUM(read_to_ends) AS read_to_ends,
