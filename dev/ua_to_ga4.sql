@@ -203,7 +203,7 @@ SELECT
     SAFE_CAST(NULL AS STRING) AS stream_id,
     'WEB' AS platform,
 FROM
-    `hogehoge.ga_sessions_*`,
+    `hogehoge.ga_sessions_*`, -- CHANGE THIS!!
     UNNEST(hits) AS hits
 WHERE
     _TABLE_SUFFIX between start_date AND end_date

@@ -24,7 +24,7 @@ FROM
   {{ ref('whs_ga__users') }}
 WHERE
   is_visited_on_the_day
-{% if is_incremental %}
+{% if is_incremental() %}
   AND event_date >= _dbt_max_partition
 {% endif %}
 GROUP BY
