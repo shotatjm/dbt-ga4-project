@@ -27,35 +27,39 @@ WITH
     GROUP BY
       1
   ),
-  session_window AS (
+  session_entrance AS (
     SELECT DISTINCT
       session_key,
-      user_pseudo_id,
-      -- ENTRANCE
-      FIRST_VALUE(event_date) OVER (PARTITION BY session_key ORDER BY created_at) AS event_date,
-      FIRST_VALUE(created_at) OVER (PARTITION BY session_key ORDER BY created_at) AS entrance_timestamp,
-      FIRST_VALUE(article_id) OVER (PARTITION BY session_key ORDER BY created_at) AS entrance_article_id,
-      FIRST_VALUE(page_view_id) OVER (PARTITION BY session_key ORDER BY created_at) AS entrance_page_view_id,
-      FIRST_VALUE(page_url) OVER (PARTITION BY session_key ORDER BY created_at) AS entrance_page_url,
-      FIRST_VALUE(page_url_canonical) OVER (PARTITION BY session_key ORDER BY created_at) AS entrance_page_url_canonical,
-      FIRST_VALUE(source) OVER (PARTITION BY session_key ORDER BY created_at) AS source,
-      FIRST_VALUE(medium) OVER (PARTITION BY session_key ORDER BY created_at) AS medium,
-      FIRST_VALUE(campaign) OVER (PARTITION BY session_key ORDER BY created_at) AS campaign,
-      FIRST_VALUE(content) OVER (PARTITION BY session_key ORDER BY created_at) AS content,
-      FIRST_VALUE(term) OVER (PARTITION BY session_key ORDER BY created_at) AS term,
-      FIRST_VALUE(ga_session_number) OVER (PARTITION BY session_key ORDER BY created_at) AS ga_session_number,
-      -- EXIT
-      FIRST_VALUE(user_id) OVER (PARTITION BY session_key ORDER BY created_at DESC) AS user_id,
-      FIRST_VALUE(created_at) OVER (PARTITION BY session_key ORDER BY created_at DESC) AS exit_timestamp,
-      FIRST_VALUE(article_id) OVER (PARTITION BY session_key ORDER BY created_at DESC) AS exit_article_id,
-      FIRST_VALUE(page_view_id) OVER (PARTITION BY session_key ORDER BY created_at DESC) AS exit_page_view_id,
-      FIRST_VALUE(page_url) OVER (PARTITION BY session_key ORDER BY created_at DESC) AS exit_page_url,
-      FIRST_VALUE(page_url_canonical) OVER (PARTITION BY session_key ORDER BY created_at DESC) AS exit_page_url_canonical
+      created_at AS entrance_timestamp,
+      article_id AS entrance_article_id,
+      page_url AS entrance_page_url,
+      source,
+      medium,
+      campaign,
+      content,
+      term,
+      ga_session_number,
     FROM
       {{ ref('whs_ga__page_views') }}
-    {% if is_incremental() %}
     WHERE
-      event_date >= _dbt_max_partition
+      LAG(user_pseudo_id) OVER (PARTITION BY session_key ORDER BY event_timestamp) IS NULL
+    {% if is_incremental() %}
+      AND event_date >= _dbt_max_partition
+    {% endif %}
+  ),
+  session_exit AS (
+    SELECT DISTINCT
+      session_key,
+      created_at AS exit_timestamp,
+      article_id AS exit_article_id,
+      page_url AS exit_page_url,
+      user_id,
+    FROM
+      {{ ref('whs_ga__page_views') }}
+    WHERE
+      LEAD(user_pseudo_id) OVER (PARTITION BY session_key ORDER BY event_timestamp) IS NULL
+    {% if is_incremental() %}
+      AND event_date >= _dbt_max_partition
     {% endif %}
   )
 SELECT
@@ -63,4 +67,5 @@ SELECT
   TIMESTAMP_DIFF(exit_timestamp, entrance_timestamp, SECOND) AS session_duration,
 FROM
   session_agg
-  JOIN session_window USING (session_key, event_date)
+  JOIN session_entrance USING (session_key)
+  JOIN session_exit USING (session_key)

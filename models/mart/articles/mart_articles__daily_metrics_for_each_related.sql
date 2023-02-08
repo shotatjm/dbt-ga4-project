@@ -10,6 +10,19 @@
 }}
 
 WITH
+  stg_following_log AS (
+    SELECT
+      event_date,
+      article_id,
+      LEAD(article_id) OVER (PARTITION BY session_key ORDER BY event_timestamp) AS following_article_id,
+      published_at,
+    FROM
+      {{ ref('whs_ga__page_views') }}
+    {% if is_incremental() %}
+    WHERE
+      event_date >= _dbt_max_partition
+    {% endif %}
+  ),
   following_log AS (
     SELECT
       event_date,
@@ -17,15 +30,9 @@ WITH
       following_article_id AS related_article_id,
       ANY_VALUE(published_at) AS published_at,
       COUNT(1) AS clicks,
-      COUNTIF(REGEXP_CONTAINS(following_page_url, r"\?ref=article_link&popin")) AS clicks_related_link_popin,
-      COUNTIF(REGEXP_CONTAINS(following_page_url, r"\?ref=article_link&logly")) AS clicks_related_link_logly,
     FROM
-      {{ ref('whs_ga__page_views') }}
+      stg_following_log
     WHERE
-    {% if is_incremental() %}
-      event_date >= _dbt_max_partition
-      AND
-    {% endif %}
       following_article_id IS NOT NULL
       AND following_article_id != article_id
     GROUP BY
@@ -72,7 +79,7 @@ WITH
   )
 SELECT
   *,
-  clicks - (clicks_related_link_popin + clicks_related_link_logly + clicks_related_link + clicks_related_link_next + clicks_series_link + clicks_series_link_end + clicks_inner_link) AS clicks_others,
+  clicks - (clicks_related_link + clicks_related_link_next + clicks_series_link + clicks_series_link_end + clicks_inner_link) AS clicks_others,
   event_date = DATE(published_at) AS is_published_date,
   {{ is_1st_week('event_date', 'published_at') }} AS is_1st_week,
   {{ is_1st_month('event_date', 'published_at') }} AS is_1st_month,

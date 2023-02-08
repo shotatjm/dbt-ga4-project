@@ -9,8 +9,6 @@ SELECT
   SUM(clicks) AS clicks,
   SUM(clicks_related_link) AS clicks_related_link,
   SUM(clicks_related_link_next) AS clicks_related_link_next,
-  SUM(clicks_related_link_popin) AS clicks_related_link_popin,
-  SUM(clicks_related_link_logly) AS clicks_related_link_logly,
   SUM(clicks_series_link) AS clicks_series_link,
   SUM(clicks_series_link_end) AS clicks_series_link_end,
   SUM(clicks_inner_link) AS clicks_inner_link,
